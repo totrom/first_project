@@ -359,7 +359,9 @@ public class Facturar extends javax.swing.JInternalFrame {
             busqueda.setVisible(true);
         }
 
+       busqueda.setFocus();
        this.toBack();
+       
         
        // Menu frmMenu = new Menu();
         

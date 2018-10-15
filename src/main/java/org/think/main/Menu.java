@@ -5,7 +5,11 @@
  */
 package org.think.main;
 
+import java.sql.SQLException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JFrame;
+import org.think.dao.DaoCliente;
 import org.think.facturas.Facturar;
 
 /**
@@ -36,6 +40,7 @@ public class Menu extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jMenuItem1 = new javax.swing.JMenuItem();
         panel = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
@@ -48,6 +53,10 @@ public class Menu extends javax.swing.JFrame {
         jCheckBoxMenuItem5 = new javax.swing.JCheckBoxMenuItem();
         jCheckBoxMenuItem6 = new javax.swing.JCheckBoxMenuItem();
         jMenu3 = new javax.swing.JMenu();
+        jMenu5 = new javax.swing.JMenu();
+        jCheckBoxMenuItem7 = new javax.swing.JCheckBoxMenuItem();
+
+        jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setFont(new java.awt.Font("Times New Roman", 0, 24)); // NOI18N
@@ -110,6 +119,19 @@ public class Menu extends javax.swing.JFrame {
         jMenu3.setText("Registros");
         jMenuBar1.add(jMenu3);
 
+        jMenu5.setText("Probar Connection");
+
+        jCheckBoxMenuItem7.setSelected(true);
+        jCheckBoxMenuItem7.setText("Probar");
+        jCheckBoxMenuItem7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jCheckBoxMenuItem7ActionPerformed(evt);
+            }
+        });
+        jMenu5.add(jCheckBoxMenuItem7);
+
+        jMenuBar1.add(jMenu5);
+
         setJMenuBar(jMenuBar1);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -130,6 +152,17 @@ public class Menu extends javax.swing.JFrame {
         // TODO add your handling code here:
         mostrarFacturacion();
     }//GEN-LAST:event_jCheckBoxMenuItem2ActionPerformed
+
+    private void jCheckBoxMenuItem7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBoxMenuItem7ActionPerformed
+        try {
+            // TODO add your handling code here:
+            DaoCliente cliente = new DaoCliente();
+            cliente.probar();
+        } catch (SQLException ex) {
+            Logger.getLogger(Menu.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }//GEN-LAST:event_jCheckBoxMenuItem7ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -183,11 +216,14 @@ public class Menu extends javax.swing.JFrame {
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem4;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem5;
     private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem6;
+    private javax.swing.JCheckBoxMenuItem jCheckBoxMenuItem7;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenu jMenu4;
+    private javax.swing.JMenu jMenu5;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenuItem jMenuItem1;
     public static javax.swing.JDesktopPane panel;
     // End of variables declaration//GEN-END:variables
 }

@@ -5,6 +5,13 @@
     <artifactId>ITLAfirstproyect</artifactId>
     <version>1.0</version>
     <packaging>jar</packaging>
+    <dependencies>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>pgjdbc-benchmark</artifactId>
+            <version>42.2.2</version>
+        </dependency>
+    </dependencies>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>1.8</maven.compiler.source>

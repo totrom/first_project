@@ -5,12 +5,21 @@
  */
 package org.think.facturas;
 
+import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.DecimalFormat;
+import java.time.Instant;
+import java.time.LocalDateTime;
 import javax.swing.table.DefaultTableModel;
 import org.think.dto.DtoCliente;
 import org.think.dto.DtoProducto;
 import org.think.main.Menu;
 import javax.swing.JOptionPane;
+import org.think.dao.DaoFactura;
+import org.think.dao.DaoFacturaDetalle;
+import org.think.dto.DtoFactura;
+import org.think.dto.DtoFacturaDetalle;
+import org.think.utility.Util;
 
 /**
  *
@@ -37,6 +46,8 @@ public class Facturar extends javax.swing.JInternalFrame {
      private float totalGen;
      private float itbisTotal;
      
+     int idCliente;
+     
      String[] row;
     
     DecimalFormat format = new DecimalFormat("#.0000");
@@ -52,6 +63,7 @@ public class Facturar extends javax.swing.JInternalFrame {
         modelo.addColumn("Descripcion");
         modelo.addColumn("Cantidad");
         modelo.addColumn("Precio");
+        modelo.addColumn("Desc");
         modelo.addColumn("ITBIS");
         modelo.addColumn("Total");
         
@@ -334,6 +346,11 @@ public class Facturar extends javax.swing.JInternalFrame {
         jLabel11.setText("ITBIS:");
 
         txtITBISGen.setFont(new java.awt.Font("Times New Roman", 0, 24)); // NOI18N
+        txtITBISGen.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txtITBISGenActionPerformed(evt);
+            }
+        });
 
         txtTotalGen.setFont(new java.awt.Font("Times New Roman", 0, 24)); // NOI18N
 
@@ -382,13 +399,17 @@ public class Facturar extends javax.swing.JInternalFrame {
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+            .addGroup(jPanel1Layout.createSequentialGroup()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addGap(35, 35, 35)
+                        .addComponent(jButton3)
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGap(8, 8, 8)
+                        .addComponent(txtNombre, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(1, 1, 1)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(jLabel2)
                             .addComponent(txtDireccion, javax.swing.GroupLayout.PREFERRED_SIZE, 44, javax.swing.GroupLayout.PREFERRED_SIZE))
@@ -407,12 +428,8 @@ public class Facturar extends javax.swing.JInternalFrame {
                             .addComponent(jLabel10)
                             .addComponent(txtTotalGen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addComponent(txtSubTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(txtITBISGen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addContainerGap())
-                    .addGroup(jPanel1Layout.createSequentialGroup()
-                        .addGap(31, 31, 31)
-                        .addComponent(jButton3)
-                        .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))))
+                            .addComponent(txtITBISGen, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
         );
 
         btcCancel.setFont(new java.awt.Font("Times New Roman", 0, 24)); // NOI18N
@@ -533,7 +550,56 @@ public class Facturar extends javax.swing.JInternalFrame {
 
     private void btnSalvarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSalvarActionPerformed
         // TODO add your handling code here:
+        facturar();
+        modelo = null;
+        
     }//GEN-LAST:event_btnSalvarActionPerformed
+
+    private void txtITBISGenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtITBISGenActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txtITBISGenActionPerformed
+    
+    
+    private void facturar(){
+        
+        DtoFactura dtoFactura = new DtoFactura();
+        DtoFacturaDetalle detalle = new DtoFacturaDetalle();
+        
+        
+        int idUsuario = 1; //Modificar esto
+        int idFactura;
+        
+       try{
+        DaoFactura daoFactura = new DaoFactura();
+        DaoFacturaDetalle daoDetalle = new DaoFacturaDetalle();
+        
+        idFactura = Util.getIdTabla("factura");
+        
+        dtoFactura.setNo_factura(idFactura);
+        dtoFactura.setComentario(txtComentario.getText());
+        dtoFactura.setIdusuario_usuario(idUsuario);
+        //dtoFactura.setFecha(Util.getFecha());
+        dtoFactura.setIdcliente_cliente(idCliente);
+        
+        daoFactura.insertarFactura(dtoFactura);
+        
+        for(int i = 0; i < modelo.getRowCount(); i++ ){
+
+            detalle.setIdproducto_producto(Integer.parseInt((String)modelo.getValueAt(i, 0)));
+            detalle.setCantidad(Integer.parseInt((String)modelo.getValueAt(i, 2)));
+            detalle.setPrecio(Float.parseFloat((String)modelo.getValueAt(i, 3)));
+            detalle.setDescuento(Float.parseFloat((String)modelo.getValueAt(i, 4)));
+            detalle.setItbis(Float.parseFloat((String)modelo.getValueAt(i, 6)));
+            detalle.setNo_factura_factura(idFactura);
+            
+            daoDetalle.insertarFacturaDetalle(detalle);
+        
+        }
+       }catch(SQLException e){
+           JOptionPane.showMessageDialog(this, "error " + e.getMessage());
+       }
+          
+    }
     
     private boolean camposLlenos(){
         if(txtPrecio.getText().equals("") || txtCant.getText().equals("") || txtItbis.equals("")) return false;
@@ -543,6 +609,7 @@ public class Facturar extends javax.swing.JInternalFrame {
     
     public void datosCliente(DtoCliente cliente){
         
+        idCliente = cliente.getIdcliente();
         txtNombre.setText(cliente.getNombre());
         txtDireccion.setText(cliente.getDireccion());
     }
@@ -594,8 +661,9 @@ public class Facturar extends javax.swing.JInternalFrame {
         row[1] = txtDescrip.getText();
         row[2] = String.valueOf(cantidadVendida);
         row[3] = String.valueOf(precioVenta);
-        row[4] = String.valueOf(itbisVenta);
-        row[5] = String.valueOf((precioVenta * cantidadVendida) + itbisVenta);
+        row[4] = String.valueOf(min_porc); // Modificar Aquí va el descuento
+        row[5] = String.valueOf(itbisVenta);
+        row[6] = String.valueOf((precioVenta * cantidadVendida) + itbisVenta);
         
         modelo.addRow(row);
     }
@@ -609,7 +677,7 @@ public class Facturar extends javax.swing.JInternalFrame {
             c = Float.parseFloat((String)modelo.getValueAt(i, 2));
             p = Float.parseFloat((String)modelo.getValueAt(i, 3));
             subTotal += (c * p);
-            itbisTotal += Float.parseFloat((String)modelo.getValueAt(i, 4));
+            itbisTotal += Float.parseFloat((String)modelo.getValueAt(i, 5));
         }
         txtITBISGen.setText(String.valueOf(itbisTotal));
         txtSubTotal.setText(String.valueOf(subTotal));

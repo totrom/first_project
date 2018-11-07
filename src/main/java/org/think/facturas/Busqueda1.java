@@ -5,30 +5,49 @@
  */
 package org.think.facturas;
 
+import java.sql.SQLException;
+import java.sql.Timestamp;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.table.DefaultTableModel;
+import org.think.dao.DaoCliente;
+import org.think.dao.DaoProducto;
+import org.think.dto.DtoCliente;
+import org.think.dto.DtoProducto;
+
 /**
  *
  * @author Marcos Nunez
  */
 public class Busqueda1 extends javax.swing.JInternalFrame {
 
+    DefaultTableModel model;
+    private int buscar = 0;
+    
+    DaoCliente cliente;
+    DaoProducto producto;
+    
+    DtoCliente dtCliente;
+    DtoProducto dtoProducto;
+    
+    Facturar facturar;
+    
     /**
      * Creates new form Busqueda
-     */
+     *
+     * */
 
-    public Busqueda1(String title, boolean resizable, boolean closable, boolean maximizable, boolean iconifiable) {
-        super(title, resizable, closable, maximizable, iconifiable);
+    public Busqueda1(Facturar f) {
+      //  super(title, resizable, closable, maximizable, iconifiable);
         initComponents();
        //txtBuscar.requestFocus();
+      // model = new DefaultTableModel();  
+       facturar = f;
+       
+ 
     }
-    
-    
-    public Busqueda1(String s){
-    
-    }
-    
-    public Busqueda1(java.awt.Frame paren, boolean modal){
-     //   super(paren, modal);
-    }
+
+
 
     /**g
      * This method is called from within the constructor to initialize the form.
@@ -45,7 +64,7 @@ public class Busqueda1 extends javax.swing.JInternalFrame {
         jTable1 = new javax.swing.JTable();
         lbHasta = new javax.swing.JLabel();
         txtBuscar = new javax.swing.JTextField();
-        jButton1 = new javax.swing.JButton();
+        btnBuscar = new javax.swing.JButton();
         jScrollPane2 = new javax.swing.JScrollPane();
         jTable2 = new javax.swing.JTable();
         jTextField3 = new javax.swing.JTextField();
@@ -70,8 +89,7 @@ public class Busqueda1 extends javax.swing.JInternalFrame {
         });
 
         jTable1.setBackground(new java.awt.Color(255, 255, 153));
-        jTable1.setFont(new java.awt.Font("Times New Roman", 0, 24)); // NOI18N
-        jTable1.setForeground(new java.awt.Color(255, 255, 204));
+        jTable1.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
         jTable1.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
 
@@ -81,6 +99,12 @@ public class Busqueda1 extends javax.swing.JInternalFrame {
             }
         ));
         jTable1.setGridColor(new java.awt.Color(255, 255, 255));
+        jTable1.setRequestFocusEnabled(false);
+        jTable1.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jTable1MouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(jTable1);
 
         lbHasta.setFont(new java.awt.Font("Times New Roman", 0, 24)); // NOI18N
@@ -93,11 +117,11 @@ public class Busqueda1 extends javax.swing.JInternalFrame {
             }
         });
 
-        jButton1.setFont(new java.awt.Font("Times New Roman", 0, 24)); // NOI18N
-        jButton1.setText("Buscar");
-        jButton1.addActionListener(new java.awt.event.ActionListener() {
+        btnBuscar.setFont(new java.awt.Font("Times New Roman", 0, 24)); // NOI18N
+        btnBuscar.setText("Buscar");
+        btnBuscar.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jButton1ActionPerformed(evt);
+                btnBuscarActionPerformed(evt);
             }
         });
 
@@ -144,7 +168,7 @@ public class Busqueda1 extends javax.swing.JInternalFrame {
                         .addGap(18, 18, 18)
                         .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(jButton1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(btnBuscar, javax.swing.GroupLayout.DEFAULT_SIZE, 233, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addGap(0, 0, Short.MAX_VALUE)
                         .addComponent(lbHasta1)
@@ -163,16 +187,16 @@ public class Busqueda1 extends javax.swing.JInternalFrame {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(txtBuscar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jButton1))
+                    .addComponent(btnBuscar))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 273, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(1, 1, 1)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 288, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(lbHasta1))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
 
         pack();
@@ -190,18 +214,90 @@ public class Busqueda1 extends javax.swing.JInternalFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_jTextField3ActionPerformed
 
-    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+    private void btnBuscarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnBuscarActionPerformed
         // TODO add your handling code here:
+        buscar();
         
+    }//GEN-LAST:event_btnBuscarActionPerformed
+
+    private void jTable1MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jTable1MouseClicked
+        // TODO add your handling code here:
+       
+        int selectRow = jTable1.getSelectedRow();
+        switch(buscar){
+            
+            case 1: 
+                
+                dtCliente = new DtoCliente();
+                dtCliente.setIdcliente((Integer)model.getValueAt(selectRow, 0));
+                dtCliente.setNombre((String)model.getValueAt(selectRow, 1));
+                dtCliente.setDireccion((String)model.getValueAt(selectRow, 2));
+                dtCliente.setFecha_registrado((Timestamp)model.getValueAt(selectRow, 3));
+                
+                facturar.datosCliente(dtCliente);
+                break;
+                
+                
+            case 2:
+                
+                dtoProducto = new DtoProducto();
+                dtoProducto.setIdproducto((Integer)model.getValueAt(selectRow, 0));
+                dtoProducto.setDescripcion((String)model.getValueAt(selectRow, 1));
+                dtoProducto.setPrecio(Float.parseFloat(model.getValueAt(selectRow, 2).toString()));
+                dtoProducto.setCantidad((Integer)model.getValueAt(selectRow, 3));                
+                dtoProducto.setCosto(Float.parseFloat(model.getValueAt(selectRow, 4).toString()));               
+                dtoProducto.setItbis(Float.parseFloat(model.getValueAt(selectRow, 5).toString()));
+                dtoProducto.setMin_porc(Float.parseFloat(model.getValueAt(selectRow, 6).toString()));
+                
+                //showMessageDialog(this, "me ejecuto lala");
+                
+                facturar.datosProducto(dtoProducto);
+                break;
+        }
         
-    }//GEN-LAST:event_jButton1ActionPerformed
+        this.dispose();
+    }//GEN-LAST:event_jTable1MouseClicked
 
     public void setFocus(){
         this.txtBuscar.requestFocus();
     }
+    
+    public void buscar(int i){
+        this.buscar = i;
+    }
+    
+   private void buscar(){
+       
+       String abuscar = txtBuscar.getText();
+       model = new DefaultTableModel(); 
+       
+       switch(buscar){
+       
+           case 1:
+               try{
+                   cliente = new DaoCliente();
+                   model = cliente.getBusquedaForCliente(abuscar);
+                    
+               }catch(SQLException e){
+                   JOptionPane.showMessageDialog(this, e.getMessage());
+               }
+               break;
+               
+           case 2: 
+               try{
+                   producto = new DaoProducto();
+                   model = producto.getBusquedaForProducto(abuscar);
+    
+               }catch(SQLException e){
+                   JOptionPane.showMessageDialog(this, e.getMessage());
+               }              
+               break;   
+       }
+      jTable1.setModel(model);
+   }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JButton jButton1;
+    private javax.swing.JButton btnBuscar;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTable jTable1;

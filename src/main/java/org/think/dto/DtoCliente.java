@@ -16,12 +16,22 @@ public class DtoCliente {
   private int idcliente;
   private String direccion;
   private Timestamp fecha_registrado;
-
+  private DtoCliente DTOCliente;
+  
+  
     public DtoCliente() {
     }
 
     public int getIdcliente() {
         return idcliente;
+    }
+
+    public DtoCliente getDTOCliente() {
+        return DTOCliente;
+    }
+
+    public void setDTOCliente(DtoCliente DTOCliente) {
+        this.DTOCliente = DTOCliente;
     }
 
     public void setIdcliente(int idcliente) {

@@ -18,6 +18,7 @@ public class DB {
     private final String url = "jdbc:postgresql://localhost:5432/first_draft_facturacion";
     
     private Connection conexion;
+    private static Connection connect;
             
     public DB() throws SQLException{
         try{
@@ -43,4 +44,5 @@ public class DB {
        }
         
     }
+    
 }

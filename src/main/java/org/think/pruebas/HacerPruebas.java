@@ -24,11 +24,12 @@ public class HacerPruebas {
    
     
     public static void main(String[] arg){
-       String aBuscar = "Super Colmado Fred";
+       String aBuscar = "Super";
         
         try {
             DaoCliente cT = new DaoCliente();
             String sql = cT.getSelectForCliente();
+           // System.out.println(sql);
             ResultSet rs = cT.getResultSetCliente(sql, aBuscar);
             printConsulta(rs);
             
@@ -43,14 +44,15 @@ public class HacerPruebas {
         try{
             ResultSetMetaData meta = rs.getMetaData();
             
-            for(int i = 1;i < meta.getColumnCount(); i++){
-                System.out.print(meta.getColumnLabel(1).concat("\t"));
+            for(int i = 1;i <= meta.getColumnCount(); i++){
+              //  System.out.println(meta.getColumnCount());
+                System.out.print(meta.getColumnLabel(i).concat("\t"));
             }
-            
-            String[] data = new String[meta.getColumnCount()];
+            System.out.println();
+            Object[] data = new Object[meta.getColumnCount()];
             
             while(rs.next()){
-                for(int i = 1; i < data.length; i++){
+                for(int i = 1; i <= data.length; i++){
                     System.out.print(rs.getString(i).concat("\t"));
                 }
                 System.out.println();
